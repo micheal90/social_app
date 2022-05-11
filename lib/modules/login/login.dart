@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/utils.dart';
+import 'package:social_app/layout/home_layout/cubit/social_cubit.dart';
 import 'package:social_app/layout/home_layout/home_layout.dart';
 import 'package:social_app/modules/login/cubit/login_cubit.dart';
 import 'package:social_app/modules/signup/signup.dart';
@@ -32,16 +33,22 @@ class LogInScreen extends StatelessWidget {
       child: BlocConsumer<LoginCubit, LoginState>(
         listener: (context, state) {
           if (state is LoginSuccces) {
+            uId = state.uId;
+            SocialCubit.get(context).getUserData();
             CashHelper.putData(key: 'uId', value: state.uId).then((value) {
               navigateAndFinish(context, const HomeLayout());
             });
           }
+          if (state is LoginError) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(state.error)));
+          }
         },
         builder: (context, state) {
           return Scaffold(
-           // backgroundColor: KBackgroungColor,
+            // backgroundColor: KBackgroungColor,
             appBar: AppBar(
-             // backgroundColor: KBackgroungColor,
+              // backgroundColor: KBackgroungColor,
               elevation: 0,
             ),
             body: Padding(

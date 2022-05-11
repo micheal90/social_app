@@ -21,4 +21,5 @@ class LoginError extends LoginState {
   });
 }
 
+
 class LoginChangePasswordVisability extends LoginState {}

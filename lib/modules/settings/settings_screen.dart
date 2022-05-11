@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/layout/home_layout/cubit/social_cubit.dart';
 import 'package:social_app/modules/edit_profile/edit_profile_screen.dart';
+import 'package:social_app/modules/login/cubit/login_cubit.dart';
+import 'package:social_app/modules/login/login.dart';
+import 'package:social_app/modules/signup/cubit/signup_cubit.dart';
 import 'package:social_app/shared/constants.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -11,10 +14,14 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<SocialCubit, SocialState>(
       listener: (context, state) {
-        // TODO: implement listener
+        if (state is SocialLogOutSuccess) {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => LogInScreen()),
+              (Route<dynamic> route) => false);
+        }
       },
       builder: (context, state) {
-        if (state is SocialLoading) {
+        if (state is SocialGetUserLoading) {
           return const Center(child: CircularProgressIndicator());
         } else {
           var user = SocialCubit.get(context).userModel;
@@ -33,12 +40,13 @@ class SettingsScreen extends StatelessWidget {
                         child: Container(
                           height: 180,
                           decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(5),
-                                  topRight: Radius.circular(5)),
-                              image: DecorationImage(
-                                  image: NetworkImage(user!.cover),
-                                  fit: BoxFit.cover)),
+                            borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(5),
+                                topRight: Radius.circular(5)),
+                            image: DecorationImage(
+                                image: NetworkImage(user!.cover),
+                                fit: BoxFit.cover),
+                          ),
                         ),
                       ),
                       CircleAvatar(
@@ -140,7 +148,12 @@ class SettingsScreen extends StatelessWidget {
                             navigateTo(context, const EditProfileScreen()),
                         child: const Icon(Icons.edit))
                   ],
-                )
+                ),
+                OutlinedButton(
+                    onPressed: () async {
+                      SocialCubit.get(context).logOut();
+                    },
+                    child: const Text('LogOut'))
               ],
             ),
           );

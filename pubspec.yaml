@@ -27,6 +27,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  awesome_notifications: ^0.6.21
   bloc: ^8.0.2
   buildcondition: ^0.0.4
   cloud_firestore: ^3.1.6
@@ -34,24 +35,23 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+  dio: ^4.0.4
   firebase_auth: ^3.3.5
   #firebase
   firebase_core: ^1.11.0
+  firebase_messaging:
+  firebase_storage: ^10.2.7
   flutter:
     sdk: flutter
   flutter_bloc: ^8.0.1
   flutter_svg: ^1.0.3
   get: ^4.6.1
-  shared_preferences: ^2.0.12
   image_picker: ^0.8.4+5
+  intl: ^0.17.0
+  scroll_to_index: ^2.1.1
+  shared_preferences: ^2.0.13
 
 dev_dependencies:
-
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
   flutter_lints: ^1.0.0
   flutter_test:
     sdk: flutter

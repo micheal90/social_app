@@ -1,12 +1,8 @@
-import 'package:buildcondition/buildcondition.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/layout/home_layout/cubit/social_cubit.dart';
-import 'package:social_app/modules/login/login.dart';
 import 'package:social_app/modules/new_post/new_post_screen.dart';
 import 'package:social_app/shared/constants.dart';
-import 'package:social_app/shared/services/local/cash_helper.dart';
 
 class HomeLayout extends StatelessWidget {
   const HomeLayout({Key? key}) : super(key: key);
@@ -34,7 +30,7 @@ class HomeLayout extends StatelessWidget {
               FloatingActionButtonLocation.miniCenterDocked,
           floatingActionButton: FloatingActionButton(
             backgroundColor: KPrimaryColor,
-            onPressed: () =>navigateTo(context, const NewPostScreen()),
+            onPressed: () => navigateTo(context, const NewPostScreen()),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const [

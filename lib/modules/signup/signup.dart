@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get_utils/src/get_utils/get_utils.dart';
+import 'package:social_app/layout/home_layout/cubit/social_cubit.dart';
 import 'package:social_app/layout/home_layout/home_layout.dart';
 import 'package:social_app/modules/signup/cubit/signup_cubit.dart';
 import 'package:social_app/shared/constants.dart';
@@ -37,17 +38,22 @@ class SignUpScreen extends StatelessWidget {
       child: BlocConsumer<SignupCubit, SignupState>(
         listener: (context, state) {
           if (state is SignupCreateSuccces) {
-            CashHelper.putData(key: 'uId', value: state.uId).then((value){
-                          navigateAndFinish(context, const HomeLayout());
-
+            uId = state.uId;
+            SocialCubit.get(context).getUserData();
+            CashHelper.putData(key: 'uId', value: state.uId).then((value) {
+              navigateAndFinish(context, const HomeLayout());
             });
+          }
+          if (state is SignupError) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(state.error)));
           }
         },
         builder: (context, state) {
           return Scaffold(
-           // backgroundColor: KBackgroungColor,
+            // backgroundColor: KBackgroungColor,
             appBar: AppBar(
-             // backgroundColor: KBackgroungColor,
+              // backgroundColor: KBackgroungColor,
               elevation: 0,
               leading: IconButton(
                   onPressed: () => Navigator.pop(context),

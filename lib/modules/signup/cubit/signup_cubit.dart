@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/models/user_model.dart';
+import 'package:social_app/shared/constants.dart';
 
 part 'signup_state.dart';
 
@@ -44,9 +45,11 @@ class SignupCubit extends Cubit<SignupState> {
       required String uId}) {
     UserModel model = UserModel(
         name: name,
+        uId: uId,
         email: email,
         phone: phone,
         bio: 'Write your bio...',
+        messageToken: messageToken ?? '',
         imageUrl:
             'https://firebasestorage.googleapis.com/v0/b/social-app-e5b23.appspot.com/o/profile-image.jpg?alt=media&token=7db5f9c0-776a-4df8-8bd1-f2fb86711350',
         cover:

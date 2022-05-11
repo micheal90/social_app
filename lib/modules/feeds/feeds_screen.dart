@@ -1,4 +1,10 @@
+import 'package:buildcondition/buildcondition.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+
+import 'package:social_app/layout/home_layout/cubit/social_cubit.dart';
+import 'package:social_app/models/post_model.dart';
 import 'package:social_app/shared/constants.dart';
 
 class FeedsScreen extends StatelessWidget {
@@ -6,43 +12,66 @@ class FeedsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          SizedBox(
-            width: double.infinity,
-            child: Card(
-              margin: const EdgeInsets.all(8),
-              elevation: 10,
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              child: Image.network(
-                'https://image.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg',
-                fit: BoxFit.cover,
-                height: 250,
-                width: double.infinity,
-              ),
+    return BlocConsumer<SocialCubit, SocialState>(
+      listener: (context, state) {
+        // TODO: implement listener
+      },
+      builder: (context, state) {
+        print(SocialCubit.get(context).posts.length);
+        print(SocialCubit.get(context).userModel != null);
+//SocialCubit.get(context).posts.isNotEmpty &&
+        return BuildCondition(
+          condition: SocialCubit.get(context).posts.isNotEmpty &&
+              SocialCubit.get(context).userModel != null,
+          fallback: (context) => const Center(
+            child: CircularProgressIndicator(),
+          ),
+          builder: (context) => SingleChildScrollView(
+            child: Column(
+              children: [
+                // SizedBox(
+                //   width: double.infinity,
+                //   child: Card(
+                //     margin: const EdgeInsets.all(8),
+                //     elevation: 10,
+                //     clipBehavior: Clip.antiAliasWithSaveLayer,
+                //     child: Image.network(
+                //       'https://image.freepik.com/free-photo/waist-up-portrait-handsome-serious-unshaven-male-keeps-hands-together-dressed-dark-blue-shirt-has-talk-with-interlocutor-stands-against-white-wall-self-confident-man-freelancer_273609-16320.jpg',
+                //       fit: BoxFit.cover,
+                //       height: 250,
+                //       width: double.infinity,
+                //     ),
+                //   ),
+                // ),
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) => PostWidget(
+                    post: SocialCubit.get(context).posts[index],
+                  ),
+                  itemCount: SocialCubit.get(context).posts.length,
+                  separatorBuilder: (BuildContext context, int index) =>
+                      const SizedBox(
+                    height: 8,
+                  ),
+                )
+              ],
             ),
           ),
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) => PostWidget(),
-            itemCount: 5,
-            separatorBuilder: (BuildContext context, int index) =>
-                const SizedBox(
-              height: 8,
-            ),
-          )
-        ],
-      ),
+        );
+      },
     );
   }
 }
 
 class PostWidget extends StatelessWidget {
-  const PostWidget({
+  PostWidget({
     Key? key,
+    required this.post,
   }) : super(key: key);
+  final PostModel post;
+
+  final commentController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -51,17 +80,18 @@ class PostWidget extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Row(
                 children: [
                   CircleAvatar(
-                    backgroundImage: NetworkImage(
-                        'https://as2.ftcdn.net/v2/jpg/02/42/00/09/1000_F_242000990_peOX8nxSnyxotZjMUzmsR5KV3ZDwgCtM.jpg'),
+                    backgroundImage: NetworkImage(post.image),
                     radius: 24,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 15,
                   ),
                   Expanded(
@@ -71,8 +101,8 @@ class PostWidget extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              'Micheal Hana',
-                              style: TextStyle(
+                              post.name,
+                              style: const TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(
@@ -81,11 +111,11 @@ class PostWidget extends StatelessWidget {
                             Container(
                               height: 15,
                               width: 15,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 color: Colors.blue,
                                 shape: BoxShape.circle,
                               ),
-                              child: FittedBox(
+                              child: const FittedBox(
                                   child: Icon(
                                 Icons.done,
                                 color: Colors.white,
@@ -94,99 +124,58 @@ class PostWidget extends StatelessWidget {
                           ],
                         ),
                         Text(
-                          'January 21,2022 at 10.00 pm',
-                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                          DateFormat.yMd().add_jm()
+                              .format(DateTime.parse(post.dateTime)),
+                          style:
+                              const TextStyle(color: Colors.grey, fontSize: 12),
                         )
                       ],
                     ),
                   ),
                   IconButton(
                       onPressed: () {},
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.more_horiz,
                         size: 20,
                       ))
                 ],
               ),
             ),
-            Divider(),
-            Text(
-                'Lorem elit aliquip amet anim eu eiusmod sint quis labore culpa minim deserunt ipsum aliqua. Est ullamco non nisi et sit non ex do enim. Labore minim ipsum cupidatat laborum culpa magna sint consectetur ea id labore. Velit id culpa incididunt magna consequat est eiusmod officia enim qui voluptate irure voluptate. Qui qui dolor minim mollit anim nostrud non. Ea nostrud eiusmod minim aute ipsum ex irure eu reprehenderit magna nulla dolore.'),
-            SizedBox(
-              width: double.infinity,
-              child: Wrap(
-                spacing: 2,
-                children: [
-                  MaterialButton(
-                    minWidth: 1,
-                    padding: EdgeInsets.zero,
-                    onPressed: () {},
-                    child: Text(
-                      '#Software',
-                      style: TextStyle(color: KPrimaryColor),
-                    ),
-                  ),
-                  MaterialButton(
-                    minWidth: 1,
-                    padding: EdgeInsets.zero,
-                    onPressed: () {},
-                    child: Text(
-                      '#Software',
-                      style: TextStyle(color: KPrimaryColor),
-                    ),
-                  ),
-                  MaterialButton(
-                    minWidth: 1,
-                    padding: EdgeInsets.zero,
-                    onPressed: () {},
-                    child: Text(
-                      '#Software',
-                      style: TextStyle(color: KPrimaryColor),
-                    ),
-                  ),
-                  MaterialButton(
-                    minWidth: 1,
-                    padding: EdgeInsets.zero,
-                    onPressed: () {},
-                    child: Text(
-                      '#Software_pevelopment',
-                      style: TextStyle(color: KPrimaryColor),
-                    ),
-                  ),
-                  MaterialButton(
-                    minWidth: 1,
-                    padding: EdgeInsets.zero,
-                    onPressed: () {},
-                    child: Text(
-                      '#Software_pevelopment',
-                      style: TextStyle(color: KPrimaryColor),
-                    ),
-                  ),
-                  MaterialButton(
-                    minWidth: 1,
-                    padding: EdgeInsets.zero,
-                    onPressed: () {},
-                    child: Text(
-                      '#Software_pevelopment',
-                      style: TextStyle(color: KPrimaryColor),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Card(
-              margin: EdgeInsets.zero,
-              elevation: 3,
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              child: Image.network(
-                'https://as2.ftcdn.net/v2/jpg/02/42/00/09/1000_F_242000990_peOX8nxSnyxotZjMUzmsR5KV3ZDwgCtM.jpg',
-                fit: BoxFit.cover,
-                height: 250,
+            const Divider(),
+            Text(post.text),
+            Padding(
+              padding: const EdgeInsetsDirectional.only(top: 8),
+              child: SizedBox(
                 width: double.infinity,
+                child: Wrap(
+                    spacing: 5,
+                    children: List.generate(
+                        post.tags.length,
+                        (index) => InkWell(
+                              child: Text(
+                                '#${post.tags[index]}',
+                                style: const TextStyle(color: KPrimaryColor),
+                              ),
+                            ))),
               ),
             ),
+            if (post.postImage.isNotEmpty)
+              Padding(
+                padding: const EdgeInsetsDirectional.only(top: 10),
+                child: Card(
+                  margin: EdgeInsets.zero,
+                  elevation: 3,
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  child: Image.network(
+                    post.postImage,
+                    fit: BoxFit.cover,
+                    height: 250,
+                    width: double.infinity,
+                  ),
+                ),
+              ),
             Container(
-              margin: EdgeInsets.only(top: 8),
+              margin: const EdgeInsets.only(top: 8),
               child: Row(
                 children: [
                   Expanded(
@@ -197,15 +186,17 @@ class PostWidget extends StatelessWidget {
                         child: Row(
                           children: [
                             Icon(
-                              Icons.favorite_border_rounded,
+                              post.likes.isEmpty
+                                  ? Icons.favorite_border_rounded
+                                  : Icons.favorite,
                               color: Colors.red,
                             ),
                             const SizedBox(
                               width: 5,
                             ),
                             Text(
-                              '1200',
-                              style: TextStyle(color: Colors.grey),
+                              post.likes.length.toString(),
+                              style: const TextStyle(color: Colors.grey),
                             )
                           ],
                         ),
@@ -214,13 +205,15 @@ class PostWidget extends StatelessWidget {
                   ),
                   Expanded(
                     child: InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        commentFun(context);
+                      },
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Icon(
+                            const Icon(
                               Icons.textsms_outlined,
                               color: KPrimaryColor,
                             ),
@@ -228,8 +221,8 @@ class PostWidget extends StatelessWidget {
                               width: 5,
                             ),
                             Text(
-                              '120 comments',
-                              style: TextStyle(color: Colors.grey),
+                              '${post.comments.length}',
+                              style: const TextStyle(color: Colors.grey),
                             )
                           ],
                         ),
@@ -239,26 +232,28 @@ class PostWidget extends StatelessWidget {
                 ],
               ),
             ),
-            Divider(),
+            const Divider(),
             Row(
               children: [
                 Expanded(
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      commentFun(context);
+                    },
                     child: Row(
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0),
                           child: CircleAvatar(
                             backgroundImage: NetworkImage(
-                                'https://as2.ftcdn.net/v2/jpg/02/42/00/09/1000_F_242000990_peOX8nxSnyxotZjMUzmsR5KV3ZDwgCtM.jpg'),
+                                SocialCubit.get(context).userModel!.imageUrl),
                             radius: 20,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 15,
                         ),
-                        Text(
+                        const Text(
                           'Write a comment ...',
                           style: TextStyle(color: Colors.grey),
                         ),
@@ -267,19 +262,22 @@ class PostWidget extends StatelessWidget {
                   ),
                 ),
                 InkWell(
-                  onTap: () {},
+                  onTap: () => SocialCubit.get(context).likePost(post.postId),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
                       children: [
                         Icon(
-                          Icons.favorite_border_rounded,
+                          post.likes.contains(
+                                  SocialCubit.get(context).userModel!.uId)
+                              ? Icons.favorite
+                              : Icons.favorite_border_rounded,
                           color: Colors.red,
                         ),
                         const SizedBox(
                           width: 5,
                         ),
-                        Text(
+                        const Text(
                           'Like',
                           style: TextStyle(color: Colors.grey),
                         )
@@ -292,12 +290,12 @@ class PostWidget extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Row(
-                      children: [
+                      children: const [
                         Icon(
                           Icons.share_rounded,
                           color: Colors.green,
                         ),
-                        const SizedBox(
+                        SizedBox(
                           width: 5,
                         ),
                         Text(
@@ -314,5 +312,95 @@ class PostWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<dynamic> commentFun(BuildContext context) {
+    return showModalBottomSheet(
+        context: context,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))),
+        builder: (context) => Padding(
+              padding: EdgeInsets.only(
+                  top: 8,
+                  left: 8,
+                  right: 8,
+                  bottom: MediaQuery.of(context).viewInsets.bottom+20),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: post.comments.length,
+                      itemBuilder: (context, index) => Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: CircleAvatar(
+                              backgroundImage:
+                                  NetworkImage(post.comments[index].imageUrl),
+                              radius: 20,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 15,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                post.comments[index].name,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                post.comments[index].value,
+                                style: const TextStyle(color: Colors.grey),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      separatorBuilder: (BuildContext context, int index) =>
+                          const Divider(),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                          color: Colors.black12,
+                          borderRadius: BorderRadius.circular(8)),
+                      padding: const EdgeInsets.all(8),
+                      child: TextField(
+                        controller: commentController,
+                        minLines: 1,
+                        maxLines: 5,
+                        decoration: const InputDecoration(
+                            hintText: 'Write a comment',
+                            border: InputBorder.none),
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Center(
+                      child: OutlinedButton(
+                          onPressed: () {
+                            SocialCubit.get(context).addComment(
+                                post.postId, commentController.text.trim());
+                            Navigator.pop(context);
+                          },
+                          child: const Text(
+                            'Add Comment',
+                            style: TextStyle(fontSize: 18),
+                          )),
+                    )
+                  ],
+                ),
+              ),
+            ));
   }
 }
