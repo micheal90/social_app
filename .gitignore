@@ -48,3 +48,6 @@ app.*.map.json
 messaging.dart
 dio_helper.dart
 constants.dart
+google-services.json
+GoogleService-Info.plist
+firebase_options.dart

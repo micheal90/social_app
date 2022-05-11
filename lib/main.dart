@@ -1,17 +1,17 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_app/firebase_options.dart';
 import 'package:social_app/layout/home_layout/cubit/social_cubit.dart';
 import 'package:social_app/layout/home_layout/home_layout.dart';
 import 'package:social_app/modules/login/login.dart';
 import 'package:social_app/shared/bloc_observer.dart';
 import 'package:social_app/shared/constants.dart';
 import 'package:social_app/shared/services/local/cash_helper.dart';
-import 'package:social_app/shared/services/remote/dio_helper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await CashHelper.init();
    uId = CashHelper.getData(key: 'uId');
   BlocOverrides.runZoned(
